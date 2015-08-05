@@ -32,10 +32,19 @@ namespace Flashcards
                     createCardGroup();
                     break;
                 case "2":
-                    Console.WriteLine("Case 2");
+                    displayCardGroups();
                     break;
                 case "3":
                     deleteCardGroup();
+                    break;
+                case "4":
+                    createCard();
+                    break;
+                case "5":
+                    readCards();
+                    break;
+                case "6": 
+                    deleteCard();
                     break;
                 default:
                     Console.WriteLine("Default Case");
@@ -47,7 +56,12 @@ namespace Flashcards
 
         static void createCard()
         {
-
+            Console.WriteLine("Which card group would you like to modify?");
+            string path = Console.ReadLine();
+            //check if group exists
+            //create new text file in group
+            Card newCard = new Card();
+            newCard.
         }
 
         static void deleteCardGroup()
