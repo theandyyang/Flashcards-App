@@ -15,42 +15,47 @@ namespace Flashcards
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to the Flashcards app.");
-            Console.WriteLine("---------------------------------------------");
-            Console.WriteLine("What would you like to do?");
-            Console.WriteLine("\n\t1: Create card group");
-            Console.WriteLine("\n\t2: Display card groups");
-            Console.WriteLine("\n\t3: Delete card group");
-            Console.WriteLine("\n\t4: Create card");
-            Console.WriteLine("\n\t5: Read cards");
-            Console.WriteLine("\n\t6: Delete card");
 
-            string choice = Console.ReadLine();
-            switch (choice)
+            while (true)
             {
-                case "1":
-                    createCardGroup();
-                    break;
-                case "2":
-                    displayCardGroups();
-                    break;
-                case "3":
-                    deleteCardGroup();
-                    break;
-                case "4":
-                    createCard();
-                    break;
-                case "5":
-                    readCards();
-                    break;
-                case "6": 
-                    deleteCard();
-                    break;
-                default:
-                    Console.WriteLine("Default Case");
-                    break;
+                //main menu
+                Console.WriteLine("Welcome to the Flashcards app.");
+                Console.WriteLine("---------------------------------------------");
+                Console.WriteLine("What would you like to do?");
+                Console.WriteLine("\n\t1: Create card group");
+                Console.WriteLine("\n\t2: Display card groups");
+                Console.WriteLine("\n\t3: Delete card group");
+                Console.WriteLine("\n\t4: Create card");
+                Console.WriteLine("\n\t5: Read cards");
+                Console.WriteLine("\n\t6: Delete card");
+
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        createCardGroup();
+                        break;
+                    case "2":
+                        //displayCardGroups();
+                        break;
+                    case "3":
+                        deleteCardGroup();
+                        break;
+                    case "4":
+                        createCard();
+                        break;
+                    case "5":
+                        //readCards();
+                        break;
+                    case "6":
+                        //deleteCard();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command. Please try again: ");
+                        break;
+                }
+                Console.ReadKey();
             }
-            Console.ReadKey();
 
         }
 
@@ -58,10 +63,16 @@ namespace Flashcards
         {
             Console.WriteLine("Which card group would you like to modify?");
             string path = Console.ReadLine();
-            //check if group exists
-            //create new text file in group
-            Card newCard = new Card();
-            newCard.
+            if (Directory.Exists(path))
+            {
+                Console.WriteLine("");
+                Card newCard = new Card();
+            }
+            else
+            {
+                Console.WriteLine("The specified card group does not exist.");
+            }
+           
         }
 
         static void deleteCardGroup()
