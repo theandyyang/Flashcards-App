@@ -36,7 +36,7 @@ namespace Flashcards
                         createCardGroup();
                         break;
                     case "2":
-                        //displayCardGroups();
+                        displayCardGroups();
                         break;
                     case "3":
                         deleteCardGroup();
@@ -59,29 +59,57 @@ namespace Flashcards
 
         }
 
+        static void displayCardGroups()
+        {
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("Your card groups: ");
+            string targetDirectory = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\";
+            // Process the list of files found in the directory. 
+            string[] fileEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string fileName in fileEntries)
+                ProcessFile(fileName);
+
+            Console.WriteLine("-----------------------------------------");
+            /*
+            // Recurse into subdirectories of this directory. 
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+                ProcessDirectory(subdirectory);*/
+        }
+
+        public static void ProcessFile(string path)
+        {
+            path = path.Replace("C:\\Users\\Ryan\\Documents\\visual studio 2015\\Projects\\FlashcardsSolution\\Flashcards\\cards\\", "");
+            Console.WriteLine(" - {0}", path);
+        }
+
         static void createCard()
         {
-            Console.WriteLine("Which card group would you like to modify?");
-            string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + Console.ReadLine();
-            if (Directory.Exists(path))
+            while (true)
             {
-                string[] cardContent = { "", "" };
+                Console.WriteLine("Which card group would you like to modify?");
+                string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + Console.ReadLine();
+                if (Directory.Exists(path))
+                {
+                    string[] cardContent = { "", "" };
 
-                //ask user to populate two sides of the card
-                Console.Write("What would you like to write on side 1?");
-                cardContent[0] = Console.ReadLine();
+                    //ask user to populate two sides of the card
+                    Console.Write("What would you like to write on side 1?");
+                    cardContent[0] = Console.ReadLine();
 
-                Console.Write("What would you like to write on side 2?");
-                cardContent[1] = Console.ReadLine();
+                    Console.Write("What would you like to write on side 2?");
+                    cardContent[1] = Console.ReadLine();
 
-                string textFileName = "1";
-                System.IO.File.WriteAllLines(@path + "/" + textFileName + ".txt", cardContent);
+                    string textFileName = "1";
+                    //create and write to new text file
+                    System.IO.File.WriteAllLines(@path + "/" + textFileName + ".txt", cardContent);
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("The specified card group does not exist.");
+                }
             }
-            else
-            {
-                Console.WriteLine("The specified card group does not exist.");
-            }
-           
         }
 
         static void deleteCardGroup()
