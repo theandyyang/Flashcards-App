@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 using System.IO;
 
 /// <summary>
-/// A program that saves and reads flashcards for
-/// the user. 
+/// Program Name: Flashcards App (temporary name)
+/// Program Description: A program that saves and reads 
+/// flashcards for the user. 
+/// Authors: Ryan Samarajeewa, Andy Yang
 /// </summary>
 namespace Flashcards
 {
     class Program
     {
+        //main
         static void Main(string[] args)
         {
-
+            Console.WriteLine("Welcome to the Flashcards app.");
+            //loop to allow for continuous usage
             while (true)
             {
                 //main menu
-                Console.WriteLine("Welcome to the Flashcards app.");
                 Console.WriteLine("---------------------------------------------");
                 Console.WriteLine("What would you like to do?");
                 Console.WriteLine("\n\t1: Create card group");
@@ -28,8 +31,12 @@ namespace Flashcards
                 Console.WriteLine("\n\t4: Create card");
                 Console.WriteLine("\n\t5: Read cards");
                 Console.WriteLine("\n\t6: Delete card");
+                Console.WriteLine("---------------------------------------------");
 
+                //get user's command
                 string choice = Console.ReadLine();
+
+                //switch cases to lead to different functions
                 switch (choice)
                 {
                     case "1":
@@ -54,35 +61,46 @@ namespace Flashcards
                         Console.WriteLine("Invalid command. Please try again: ");
                         break;
                 }
+
                 Console.ReadKey();
+
             }
 
         }
 
+       /// <summary>
+       /// Displays the directories("card groups") within /cards.
+       /// </summary>
         static void displayCardGroups()
         {
-            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("---------------------------------------------");
             Console.WriteLine("Your card groups: ");
             string targetDirectory = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\";
+
             // Process the list of files found in the directory. 
             string[] fileEntries = Directory.GetDirectories(targetDirectory);
             foreach (string fileName in fileEntries)
                 ProcessFile(fileName);
 
-            Console.WriteLine("-----------------------------------------");
-            /*
-            // Recurse into subdirectories of this directory. 
-            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
-            foreach (string subdirectory in subdirectoryEntries)
-                ProcessDirectory(subdirectory);*/
+            Console.WriteLine("---------------------------------------------");
         }
 
-        public static void ProcessFile(string path)
+        /// <summary>
+        /// Method for formatting and printing 
+        /// the card group names.
+        /// </summary>
+        /// <param name="path"></param>
+        static void ProcessFile(string path)
         {
             path = path.Replace("C:\\Users\\Ryan\\Documents\\visual studio 2015\\Projects\\FlashcardsSolution\\Flashcards\\cards\\", "");
             Console.WriteLine(" - {0}", path);
         }
 
+        /// <summary>
+        /// Create a new text file (a card) containing
+        /// two lines, which correspond to two sides of 
+        /// a card.
+        /// </summary>
         static void createCard()
         {
             while (true)
@@ -112,6 +130,11 @@ namespace Flashcards
             }
         }
 
+        /// <summary>
+        /// Deletes a specified directory within /cards.
+        /// This will also delete all text files (cards) within the 
+        /// card group.
+        /// </summary>
         static void deleteCardGroup()
         {
             Console.WriteLine("Which card group would you like to delete?");
@@ -143,6 +166,9 @@ namespace Flashcards
             finally { }
         }
 
+        /// <summary>
+        /// Creates a new card group within /cards.
+        /// </summary>
         static void createCardGroup()
         {
             Console.WriteLine("What would you like the new flashcard group to be called?");
