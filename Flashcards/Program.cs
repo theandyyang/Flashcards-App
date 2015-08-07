@@ -62,11 +62,20 @@ namespace Flashcards
         static void createCard()
         {
             Console.WriteLine("Which card group would you like to modify?");
-            string path = Console.ReadLine();
+            string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + Console.ReadLine();
             if (Directory.Exists(path))
             {
-                Console.WriteLine("");
-                Card newCard = new Card();
+                string[] cardContent = { "", "" };
+
+                //ask user to populate two sides of the card
+                Console.Write("What would you like to write on side 1?");
+                cardContent[0] = Console.ReadLine();
+
+                Console.Write("What would you like to write on side 2?");
+                cardContent[1] = Console.ReadLine();
+
+                string textFileName = "1";
+                System.IO.File.WriteAllLines(@path + "/" + textFileName + ".txt", cardContent);
             }
             else
             {
