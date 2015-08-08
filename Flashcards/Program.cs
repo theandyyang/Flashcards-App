@@ -15,8 +15,23 @@ namespace Flashcards
 {
     class Program
     {
+        /// <summary>
+        /// Get the directory of the program and return 
+        /// a string containing the "\cards" directory.
+        /// </summary>
+        /// <returns></returns>
+        public static string getUserDirectory()
+        {
+            string path = Directory.GetCurrentDirectory();
+            if (path.Contains("bin\\Debug"))
+            {
+                path = path.Replace("bin\\Debug", "cards\\");
+            }
+            return path;
+
+        }
         //main
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             Console.WriteLine("Welcome to the Flashcards app.");
             //loop to allow for continuous usage
@@ -31,7 +46,9 @@ namespace Flashcards
                 Console.WriteLine("\n\t4: Create card");
                 Console.WriteLine("\n\t5: Read cards");
                 Console.WriteLine("\n\t6: Delete card");
+                Console.WriteLine("\n\t7: Exit program\n");
                 Console.WriteLine("---------------------------------------------");
+                Console.WriteLine(getUserDirectory());
 
                 //get user's command
                 string choice = Console.ReadLine();
@@ -57,6 +74,8 @@ namespace Flashcards
                     case "6":
                         //deleteCard();
                         break;
+                    case "7":
+                        return 1;//terminate program
                     default:
                         Console.WriteLine("Invalid command. Please try again: ");
                         break;
@@ -75,7 +94,7 @@ namespace Flashcards
         {
             Console.WriteLine("---------------------------------------------");
             Console.WriteLine("Your card groups: ");
-            string targetDirectory = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\";
+            string targetDirectory = getUserDirectory();
 
             // Process the list of files found in the directory. 
             string[] fileEntries = Directory.GetDirectories(targetDirectory);
@@ -92,7 +111,7 @@ namespace Flashcards
         /// <param name="path"></param>
         static void ProcessFile(string path)
         {
-            path = path.Replace("C:\\Users\\Ryan\\Documents\\visual studio 2015\\Projects\\FlashcardsSolution\\Flashcards\\cards\\", "");
+            path = path.Replace(getUserDirectory(), "");
             Console.WriteLine(" - {0}", path);
         }
 
@@ -106,7 +125,8 @@ namespace Flashcards
             while (true)
             {
                 Console.WriteLine("Which card group would you like to modify?");
-                string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + Console.ReadLine();
+                displayCardGroups();
+                string path = getUserDirectory() + Console.ReadLine();
                 if (Directory.Exists(path))
                 {
                     string[] cardContent = { "", "" };
@@ -138,8 +158,9 @@ namespace Flashcards
         static void deleteCardGroup()
         {
             Console.WriteLine("Which card group would you like to delete?");
+            displayCardGroups();
             string folderName = Console.ReadLine();
-            string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + folderName;
+            string path = getUserDirectory() + folderName;
 
             try
             {
@@ -150,8 +171,16 @@ namespace Flashcards
                     Console.Write("WARNING: All cards within the group will be lost.");
                     Console.ResetColor();
                     Console.Write("Are you sure you want to delete this card group? (y/n)");
-                    Directory.Delete(path, true);
-                    return;
+                    string choice = Console.ReadLine();
+                    if(choice.Equals("y")||choice.Equals("Y")){
+                        Directory.Delete(path, true);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No card groups were deleted.");
+                        return;
+                    }
+                         
                 }
                 else
                 {
@@ -164,6 +193,14 @@ namespace Flashcards
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
             finally { }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("The card group ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(folderName);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(" was deleted succesfully. Press any key to continue.");
+            Console.ResetColor();
         }
 
         /// <summary>
@@ -173,7 +210,7 @@ namespace Flashcards
         {
             Console.WriteLine("What would you like the new flashcard group to be called?");
             string folderName = Console.ReadLine();
-            string path = @"C:\Users\Ryan\Documents\visual studio 2015\Projects\FlashcardsSolution\Flashcards\cards\" + folderName;
+            string path = getUserDirectory() + folderName;
 
             try
             {
@@ -194,6 +231,14 @@ namespace Flashcards
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
             finally { }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("The card group ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(folderName);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(" was created succesfully.");
+            Console.ResetColor();
         }
     }
 }
