@@ -194,6 +194,7 @@ namespace Flashcards
             }
             finally { }
 
+            //inform user about successful card group deletion
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("The card group ");
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -201,6 +202,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(" was deleted succesfully. Press any key to continue.");
             Console.ResetColor();
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -232,6 +234,7 @@ namespace Flashcards
             }
             finally { }
 
+            //inform user of successful card group creation
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("The card group ");
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -239,6 +242,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(" was created succesfully.");
             Console.ResetColor();
+            Console.WriteLine();
         }
     }
 }
