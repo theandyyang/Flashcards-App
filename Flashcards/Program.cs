@@ -37,6 +37,7 @@ namespace Flashcards
             //loop to allow for continuous usage
             while (true)
             {
+                Console.Clear();
                 //main menu
                 Console.WriteLine("---------------------------------------------");
                 Console.WriteLine("What would you like to do?");
@@ -48,7 +49,7 @@ namespace Flashcards
                 Console.WriteLine("\n\t6: Delete card");
                 Console.WriteLine("\n\t7: Exit program\n");
                 Console.WriteLine("---------------------------------------------");
-                Console.WriteLine(getUserDirectory());
+                //Console.WriteLine(getUserDirectory());
 
                 //get user's command
                 string choice = Console.ReadLine();
@@ -60,7 +61,8 @@ namespace Flashcards
                         createCardGroup();
                         break;
                     case "2":
-                        displayCardGroups();
+                        Console.Clear();
+                        displayCardGroups(true);
                         break;
                     case "3":
                         deleteCardGroup();
@@ -81,19 +83,58 @@ namespace Flashcards
                         break;
                 }
 
-                Console.ReadKey();
+                //Console.ReadKey();
 
             }
 
         }
 
+        /// <summary>
+        /// Creates a new card group within /cards.
+        /// </summary>
+        static void createCardGroup()
+        {
+            Console.WriteLine("What would you like the new flashcard group to be called?");
+            string folderName = Console.ReadLine();
+            string path = getUserDirectory() + folderName;
+
+            try
+            {
+                // Determine whether the directory exists. 
+                if (Directory.Exists(path))
+                {
+                    Console.WriteLine("That path exists already.");
+                    return;
+                }
+
+                // Try to create the directory.
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                //Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+            finally { }
+
+            //inform user of successful card group creation
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("The card group ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(folderName);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(" was created succesfully. Press any key to continue.");
+            Console.ResetColor();
+            Console.ReadKey();
+        }
+
        /// <summary>
        /// Displays the directories("card groups") within /cards.
        /// </summary>
-        static void displayCardGroups()
+        static void displayCardGroups(bool calledFromMain)
         {
-            Console.WriteLine("---------------------------------------------");
-            Console.WriteLine("Your card groups: ");
+            Console.WriteLine("--------------Your card groups---------------");
             string targetDirectory = getUserDirectory();
 
             // Process the list of files found in the directory. 
@@ -102,6 +143,12 @@ namespace Flashcards
                 ProcessFile(fileName);
 
             Console.WriteLine("---------------------------------------------");
+
+            if (calledFromMain)
+            {
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
         }
 
         /// <summary>
@@ -114,42 +161,7 @@ namespace Flashcards
             path = path.Replace(getUserDirectory(), "");
             Console.WriteLine(" - {0}", path);
         }
-
-        /// <summary>
-        /// Create a new text file (a card) containing
-        /// two lines, which correspond to two sides of 
-        /// a card.
-        /// </summary>
-        static void createCard()
-        {
-            while (true)
-            {
-                Console.WriteLine("Which card group would you like to modify?");
-                displayCardGroups();
-                string path = getUserDirectory() + Console.ReadLine();
-                if (Directory.Exists(path))
-                {
-                    string[] cardContent = { "", "" };
-
-                    //ask user to populate two sides of the card
-                    Console.Write("What would you like to write on side 1?");
-                    cardContent[0] = Console.ReadLine();
-
-                    Console.Write("What would you like to write on side 2?");
-                    cardContent[1] = Console.ReadLine();
-
-                    string textFileName = "1";
-                    //create and write to new text file
-                    System.IO.File.WriteAllLines(@path + "/" + textFileName + ".txt", cardContent);
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("The specified card group does not exist.");
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Deletes a specified directory within /cards.
         /// This will also delete all text files (cards) within the 
@@ -157,8 +169,9 @@ namespace Flashcards
         /// </summary>
         static void deleteCardGroup()
         {
+            Console.Clear();
             Console.WriteLine("Which card group would you like to delete?");
-            displayCardGroups();
+            displayCardGroups(false);
             string folderName = Console.ReadLine();
             string path = getUserDirectory() + folderName;
 
@@ -168,7 +181,7 @@ namespace Flashcards
                 if (Directory.Exists(path))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("WARNING: All cards within the group will be lost.");
+                    Console.Write("WARNING: All cards within the group will be lost. ");
                     Console.ResetColor();
                     Console.Write("Are you sure you want to delete this card group? (y/n)");
                     string choice = Console.ReadLine();
@@ -202,47 +215,83 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(" was deleted succesfully. Press any key to continue.");
             Console.ResetColor();
-            Console.WriteLine();
+            Console.ReadKey();
         }
 
         /// <summary>
-        /// Creates a new card group within /cards.
+        /// Create a new text file (a card) containing
+        /// two lines, which correspond to two sides of 
+        /// a card.
         /// </summary>
-        static void createCardGroup()
+        static void createCard()
         {
-            Console.WriteLine("What would you like the new flashcard group to be called?");
-            string folderName = Console.ReadLine();
-            string path = getUserDirectory() + folderName;
-
-            try
+            Console.Clear();
+            while (true)
             {
-                // Determine whether the directory exists. 
+                Console.WriteLine("Which card group would you like to modify?");
+                displayCardGroups(false);
+                string path = getUserDirectory() + Console.ReadLine();
                 if (Directory.Exists(path))
                 {
-                    Console.WriteLine("That path exists already.");
-                    return;
+                    string[] cardContent = { "", "" };
+
+                    //ask user to populate two sides of the card
+                    Console.Write("What would you like to write on side 1?");
+                    cardContent[0] = Console.ReadLine();
+
+                    Console.Write("What would you like to write on side 2?");
+                    cardContent[1] = Console.ReadLine();
+
+                    string textFileName = "1";
+                    //create and write to new text file
+                    System.IO.File.WriteAllLines(@path + "/" + textFileName + ".txt", cardContent);
+                    break;
                 }
-
-                // Try to create the directory.
-                DirectoryInfo di = Directory.CreateDirectory(path);
-                Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
-
+                else
+                {
+                    Console.WriteLine("The specified card group does not exist.");
+                }
             }
-            catch (Exception e)
+        }
+
+        /// <summary>
+        /// Allows the user to select a card group and
+        /// read its cards.
+        /// </summary>
+        static void readCards()
+        {
+
+        }
+
+        /// <summary>
+        /// Allows the user to select a card group and 
+        /// delete a card from it.
+        /// </summary>
+        static void deleteCard()
+        {
+            //select card group to modify
+            while (true)
             {
-                Console.WriteLine("The process failed: {0}", e.ToString());
-            }
-            finally { }
+                Console.WriteLine("Which card group would you like to modify?");
+                string folderName = Console.ReadLine();
 
-            //inform user of successful card group creation
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("The card group ");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(folderName);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was created succesfully.");
-            Console.ResetColor();
-            Console.WriteLine();
+                if (Directory.Exists(getUserDirectory()+folderName))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("The specified card group does not exist. Please try again.");
+                }
+            }
+
+            //select and delete card
+            while (true)
+            {
+                
+            }
+
+
         }
     }
 }
