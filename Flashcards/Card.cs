@@ -8,8 +8,6 @@ namespace Flashcards
 {
     class Card
     {
-        string location = "";
-        string side1Content = "";
-        string side2Content = "";
+        string id = "";
     }
 }

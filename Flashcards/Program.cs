@@ -20,7 +20,7 @@ namespace Flashcards
         /// a string containing the "\cards" directory.
         /// </summary>
         /// <returns></returns>
-        public static string getUserDirectory()
+        static string getUserDirectory()
         {
             string path = Directory.GetCurrentDirectory();
             if (path.Contains("bin\\Debug"))
@@ -30,6 +30,18 @@ namespace Flashcards
             return path;
 
         }
+        
+        /*static IList<Card> makeList()
+        {
+            int cardGroupCount = System.IO.Directory.GetDirectories(getUserDirectory()).Length;
+
+            for (int i = 0; i < cardGroupCount; i++)
+            {
+
+            }
+            return null;
+        }*/
+
         //main
         static int Main(string[] args)
         {
@@ -153,7 +165,7 @@ namespace Flashcards
 
         /// <summary>
         /// Method for formatting and printing 
-        /// the card group names.
+        /// the card group names (used in displayCardGroups()).
         /// </summary>
         /// <param name="path"></param>
         static void ProcessFile(string path)
@@ -252,6 +264,12 @@ namespace Flashcards
                     Console.WriteLine("The specified card group does not exist.");
                 }
             }
+
+            //inform user about successful card group deletion
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("The card was created successcully. Press any key to continue.");
+            Console.ResetColor();
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -293,5 +311,6 @@ namespace Flashcards
 
 
         }
+
     }
 }
