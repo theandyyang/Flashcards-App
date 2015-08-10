@@ -31,16 +31,24 @@ namespace Flashcards
 
         }
         
-        /*static IList<Card> makeList()
+        /// <summary>
+        /// Make an IList of Card objects to allow for 
+        /// traversing through each card group.
+        /// </summary>
+        /// <returns></returns>
+        static IList<Card> makeList()
         {
-            int cardGroupCount = System.IO.Directory.GetDirectories(getUserDirectory()).Length;
+            
+            //get card groups
+            string[] fileEntries = Directory.GetDirectories(getUserDirectory());
 
-            for (int i = 0; i < cardGroupCount; i++)
+            //get cards from each card group
+            for (int i = 0; i < fileEntries.Length; i++)
             {
-
+                int cardCount = System.IO.Directory.GetFiles(getUserDirectory()).Length;
             }
             return null;
-        }*/
+        }
 
         //main
         static int Main(string[] args)
