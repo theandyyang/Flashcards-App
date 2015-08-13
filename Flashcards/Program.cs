@@ -15,6 +15,9 @@ namespace Flashcards
 {
     class Program
     {
+        //the IList array containing the user's card collection
+        IList<Card>[] cardsCollection = makeList();
+
         /// <summary>
         /// Get the directory of the program and return 
         /// a string containing the "\cards" directory.
@@ -30,24 +33,37 @@ namespace Flashcards
             return path;
 
         }
-        
+
         /// <summary>
         /// Make an IList of Card objects to allow for 
         /// traversing through each card group.
         /// </summary>
         /// <returns></returns>
-        static IList<Card> makeList()
+        //TODO Vigorous testing
+        static IList<Card>[] makeList()
         {
             
-            //get card groups
+            //get card group directories and store it in a string array
             string[] fileEntries = Directory.GetDirectories(getUserDirectory());
+
+            //number of card groups the user has
+            int numGroups = fileEntries.Length;
+            
+            //Create an array of ILists. The size of the array depends on the number of 
+            //card groups the user has.
+            IList<Card>[] iListArray = new IList<Card>[numGroups];
 
             //get cards from each card group
             for (int i = 0; i < fileEntries.Length; i++)
             {
-                int cardCount = System.IO.Directory.GetFiles(getUserDirectory()).Length;
+                int cardCount = System.IO.Directory.GetFiles(fileEntries[i]).Length;
+                Console.WriteLine(fileEntries[i]);
+                Console.WriteLine(cardCount);
+
             }
-            return null;
+
+            return iListArray;
+
         }
 
         //main
@@ -70,7 +86,7 @@ namespace Flashcards
                 Console.WriteLine("\n\t7: Exit program\n");
                 Console.WriteLine("---------------------------------------------");
                 //Console.WriteLine(getUserDirectory());
-
+                makeList();
                 //get user's command
                 string choice = Console.ReadLine();
 
@@ -149,7 +165,7 @@ namespace Flashcards
             Console.ReadKey();
         }
 
-       /// <summary>
+        /// <summary>
        /// Displays the directories("card groups") within /cards.
        /// </summary>
         static void displayCardGroups(bool calledFromMain)

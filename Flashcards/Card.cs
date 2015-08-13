@@ -9,5 +9,6 @@ namespace Flashcards
     class Card
     {
         string id = "";
+        bool viewed = false;
     }
 }
