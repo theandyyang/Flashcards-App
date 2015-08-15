@@ -141,7 +141,7 @@ namespace Flashcards
                         //readCards();
                         break;
                     case "6":
-                        //deleteCard();
+                        deleteCard();
                         break;
                     case "7":
                         return 1;//terminate program
@@ -207,7 +207,7 @@ namespace Flashcards
             // Process the list of files found in the directory. 
             string[] fileEntries = Directory.GetDirectories(targetDirectory);
             foreach (string fileName in fileEntries)
-                ProcessFile(fileName);
+                ProcessFolder(fileName);
 
             Console.WriteLine("---------------------------------------------");
 
@@ -223,7 +223,7 @@ namespace Flashcards
         /// the card group names (used in displayCardGroups()).
         /// </summary>
         /// <param name="path"></param>
-        static void ProcessFile(string path)
+        static void ProcessFolder(string path)
         {
             path = path.Replace(getUserDirectory(), "");
             Console.WriteLine(" - {0}", path);
@@ -342,11 +342,14 @@ namespace Flashcards
         /// </summary>
         static void deleteCard()
         {
+            string folderName;
+            string deleteCard;
             //select card group to modify
             while (true)
             {
                 Console.WriteLine("Which card group would you like to modify?");
-                string folderName = Console.ReadLine();
+                displayCardGroups(false);
+                folderName = Console.ReadLine();
 
                 if (Directory.Exists(getUserDirectory()+folderName))
                 {
@@ -359,12 +362,80 @@ namespace Flashcards
             }
 
             //select and delete card
+            displayCards(folderName);
+            Console.WriteLine("Which card would you like to delete?");                  
             while (true)
             {
-                
+                deleteCard = Console.ReadLine();
+                if (File.Exists(getUserDirectory() + folderName + "\\" + deleteCard))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("The specified card does not exist. Please try again.");
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("WARNING: All cards within the group will be lost. ");
+            Console.ResetColor();
+            Console.WriteLine("Are you sure you want to delete this card group? (y/n)");
+            string choice = Console.ReadLine();
+            try
+            {
+                if (choice.Equals("y") || choice.Equals("Y"))
+                {
+                    File.Delete(getUserDirectory() + folderName + "\\" + deleteCard);
+                }
+                else
+                {
+                    Console.WriteLine("No cards were deleted.");
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
             }
 
 
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("The card ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(deleteCard);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(" was deleted succesfully. Press any key to continue.");
+            Console.ResetColor();
+            Console.ReadKey();
+
+
+
+        }
+        ///<summary>
+        ///displays files ("cards") with in \cards\group
+        ///</summary>
+        static void displayCards(string group)
+        {
+            Console.Clear();
+            Console.WriteLine("-------------- " + group + " ---------------");
+            string targetDirectory = getUserDirectory();
+            string[] fileEntries = Directory.GetFiles(targetDirectory+group + "\\");
+            foreach (string fileName in fileEntries)
+                ProcessFiles(fileName, group);
+
+            Console.WriteLine("---------------------------------------------");
+            
+        }
+
+        /// <summary>
+        /// Method for formatting and printing 
+        /// the card names (used in displayCards).
+        /// </summary>
+        static void ProcessFiles(string path, string cardGroup)
+        {
+            path = path.Replace(getUserDirectory() + cardGroup + "\\", "");
+            Console.WriteLine(" - {0}", path);
         }
 
     }
