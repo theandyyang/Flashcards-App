@@ -412,6 +412,7 @@ namespace Flashcards
 
 
         }
+        
         ///<summary>
         ///displays files ("cards") with in \cards\group
         ///</summary>
