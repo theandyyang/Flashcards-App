@@ -160,7 +160,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(folderName);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was created succesfully. Press any key to continue.");
+            Console.Write(" was created successfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
         }
@@ -249,7 +249,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(folderName);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was deleted succesfully. Press any key to continue.");
+            Console.Write(" was deleted successfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
         }
@@ -297,7 +297,7 @@ namespace Flashcards
 
             //inform user about successful card group deletion
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("The card was created successcully. Press any key to continue.");
+            Console.Write("The card was created successfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
         }
@@ -380,7 +380,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(deleteCard);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was deleted succesfully. Press any key to continue.");
+            Console.Write(" was deleted successfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
 
