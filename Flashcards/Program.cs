@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Flashcards
     {
         //the IList array containing the user's card collection
         IList<Card>[] cardsCollection = makeList();
-
+        static string file;
         /// <summary>
         /// Get the directory of the program and return 
         /// a string containing the "\cards" directory.
@@ -107,7 +108,7 @@ namespace Flashcards
                         createCard();
                         break;
                     case "5":
-                        //readCards();
+                        readCards();
                         break;
                     case "6":
                         deleteCard();
@@ -308,6 +309,75 @@ namespace Flashcards
         /// </summary>
         static void readCards()
         {
+            string folderName;
+            string cardDir;
+            string id;
+            string side1;
+            string side2;
+            int counter = 0;
+            int length;
+            Random rand = new Random();
+            int sumNum;
+            Card next;
+            while (true)
+            {
+                Console.WriteLine("Which card group would you like to read?");
+                displayCardGroups(false);
+                folderName = Console.ReadLine();
+                cardDir = getUserDirectory() + folderName;
+
+                if (Directory.Exists(cardDir))
+                {
+                    length = Directory.GetFiles(@cardDir).Length;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("The specified card group does not exist. Please try again.");
+                }
+            }
+
+            Hashtable ht = new Hashtable();
+            string[] fileEntries = Directory.GetFiles(cardDir);
+            foreach (string fileName in fileEntries)
+            {
+                file = Path.GetFileName(fileName);
+                id = file.Substring(0, file.LastIndexOf(".txt"));
+                side1 = File.ReadLines(fileName).First();
+                side2 = File.ReadLines(fileName).Skip(1).Take(1).First();
+                next = new Card(id, side1, side2);
+                ht.Add(counter, next);
+                counter++;
+            }
+            Console.Clear();
+            for (int i = 0; i < length;i++)
+            {
+                sumNum = rand.Next(length);
+                next = (Card)ht[sumNum];
+                while (next.viewed)
+                {
+                    sumNum++;
+                    if (sumNum == length)
+                    {
+                        sumNum = 0;
+                    }
+                    next = (Card)ht[sumNum];
+                }
+
+                Console.WriteLine(next.side1);
+                Console.ReadKey();
+                Console.WriteLine(next.side2);
+                Console.WriteLine();
+                next.viewed = true;
+                Console.ReadKey();
+            }
+
+
+            Console.WriteLine("Finished card group " + folderName);
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+
+
 
         }
 
