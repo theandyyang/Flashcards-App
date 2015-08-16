@@ -340,16 +340,18 @@ namespace Flashcards
         /// </summary>
         static void readCards()
         {
-            string folderName;
-            string cardDir;
-            string id;
-            string side1;
-            string side2;
-            int counter = 0;
-            int length;
+            string folderName; //user input (file name)
+            string cardDir; //directory of the card group
+            string id; //file name without the extension
+            string side1; //side of card
+            string side2; //side of card
+            int counter = 0; //counter to see if the "end" of the hashtable has been reached
+            int length; //number of hashes
             Random rand = new Random();
-            int sumNum;
-            Card next;
+            int sumNum; //randomly generated number
+            Card next; 
+
+            //asks user to select a card group
             while (true)
             {
                 Console.WriteLine("Which card group would you like to read?");
@@ -368,8 +370,13 @@ namespace Flashcards
                 }
             }
 
-            Hashtable ht = new Hashtable();
-            string[] fileEntries = Directory.GetFiles(cardDir);
+
+            Hashtable ht = new Hashtable(); //new hashtable
+            string[] fileEntries = Directory.GetFiles(cardDir); //the directories of cards into a string array
+
+            //loops through the string array fileEntries and places information into a Card Object
+            //Then inserts the Card object into the hashtable
+            //throws an exception if a Card is "corrupted"
             foreach (string fileName in fileEntries)
             {
                 try
@@ -386,18 +393,25 @@ namespace Flashcards
                     Console.WriteLine(file + " is corrupted. Delete it and try again");
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
-
                     return;
                 }
             }
+
+
             Console.Clear();
+
+            //randomly generates different hashes to access different cards within the hashtable
             for (int i = 0; i < length;i++)
             {
                 sumNum = rand.Next(length);
                 next = (Card)ht[sumNum];
+
+                //goes to the next hash if the card has already been viewed
                 while (next.viewed)
                 {
                     sumNum++;
+                    
+                    //returns to the "beginning" of the table if the it has reached the "end"
                     if (sumNum == length)
                     {
                         sumNum = 0;
