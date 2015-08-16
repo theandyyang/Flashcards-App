@@ -341,13 +341,23 @@ namespace Flashcards
             string[] fileEntries = Directory.GetFiles(cardDir);
             foreach (string fileName in fileEntries)
             {
-                file = Path.GetFileName(fileName);
-                id = file.Substring(0, file.LastIndexOf(".txt"));
-                side1 = File.ReadLines(fileName).First();
-                side2 = File.ReadLines(fileName).Skip(1).Take(1).First();
-                next = new Card(id, side1, side2);
-                ht.Add(counter, next);
-                counter++;
+                try
+                {
+                    file = Path.GetFileName(fileName);
+                    id = file.Substring(0, file.LastIndexOf(".txt"));
+                    side1 = File.ReadLines(fileName).First();
+                    side2 = File.ReadLines(fileName).Skip(1).Take(1).First();
+                    next = new Card(id, side1, side2);
+                    ht.Add(counter, next);
+                    counter++;
+                }
+                catch (Exception e) {
+                    Console.WriteLine(file + " is corrupted. Delete it and try again");
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+
+                    return;
+                }
             }
             Console.Clear();
             for (int i = 0; i < length;i++)
