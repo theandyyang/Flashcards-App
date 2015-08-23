@@ -15,19 +15,46 @@ namespace Flashcards
 {
     class Card
     {
-        public string id, side1, side2;
-        public bool viewed = false;
+        public string belongsTo = "";//the path of the card group that contains this card
+        public string sideOne = "";//first side of the card
+        public string sideTwo = "";//second side of the card
+        public bool viewed = false;//a 'viewed' variable to determine if the card has been viewed
 
-
-        public Card(string id, string side1, string side2)
+        /// <summary>
+        /// populates a side of a card with a string 
+        /// </summary>
+        public void writeToSide(int side, string content)
         {
-            this.id = id;
-            this.side1 = side1;
-            this.side2 = side2;
-            viewed = false;
+            if (side == 1)
+            {
+                this.sideOne = content;
+            }
+            else
+            {
+                this.sideTwo = content;
+            }
+
         }
 
-          
+        /// <summary>
+        /// Set the 'viewed' variable to true 
+        /// so that it cannot be read twice in the same
+        /// session.
+        /// </summary>
+        public void setToViewed()
+        {
+            this.viewed = true;
+        }
+
+        /// <summary>
+        /// toString() method to display the card's contents.
+        /// Used mainly for testing.
+        /// </summary>
+        /// <returns></returns>
+        public string toString()
+        {
+            return this.sideOne + "\n" + this.sideTwo;
+        }        
     }
 
     

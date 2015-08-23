@@ -10,3 +10,6 @@ D:\Code\C#\Flashcards-App\Flashcards\obj\Debug\Flashcards.pdb
 D:\Code\C#\Flashcards-App\Flashcards\bin\Debug\Flashcards.exe
 D:\Code\C#\Flashcards-App\Flashcards\bin\Debug\Flashcards.pdb
 D:\Code\C#\Flashcards-App\Flashcards\obj\Debug\Flashcards.csprojResolveAssemblyReference.cache
+D:\Code\C#\linkedlist-solution\Flashcards\bin\Debug\Flashcards.exe.config
+D:\Code\C#\linkedlist-solution\Flashcards\obj\Debug\Flashcards.exe
+D:\Code\C#\linkedlist-solution\Flashcards\obj\Debug\Flashcards.pdb

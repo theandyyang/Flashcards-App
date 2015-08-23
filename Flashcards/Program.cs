@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using System.Diagnostics;
 /// <summary>
 /// Program Name: Flashcards App (temporary name)
 /// Program Description: A program that saves and reads 
@@ -16,9 +15,7 @@ namespace Flashcards
 {
     class Program
     {
-        //Make the IList array containing the user's card collection
-        IList<Card>[] cardsCollection = makeList();
-        static string file;
+
         /// <summary>
         /// Get the directory of the program and return 
         /// a string containing the "\cards" directory.
@@ -40,35 +37,60 @@ namespace Flashcards
         /// traversing through each card group.
         /// </summary>
         /// <returns></returns>
-        //TODO Vigorous testing
         static IList<Card>[] makeList()
         {
-            
-            //get card group directories and store it in a string array
-            string[] fileEntries = Directory.GetDirectories(getUserDirectory());
+            //get card group paths and store it in a string array
+            string[] folders = Directory.GetDirectories(getUserDirectory());
 
             //number of card groups the user has
-            int numGroups = fileEntries.Length;
+            int numGroups = folders.Length;
             
-            //Create an array of ILists. The size of the array depends on the number of 
-            //card groups the user has.
-            IList<Card>[] iListArray = new IList<Card>[numGroups];
-
-            //get cards from each card group
-            for (int i = 0; i < fileEntries.Length; i++)
+            /** FOR TESTING
+            foreach(string folder in folders)
             {
-                int cardCount = System.IO.Directory.GetFiles(fileEntries[i]).Length;
+                Console.WriteLine(folder);
+            }
+            */
 
-                for(int j = 0; j < cardCount; j++)
-                {
-                    iListArray[i].Add(new Card());
-                }
+            //Create an array of ILists. The size of the array depends on the number of card groups the user has.
+            IList<Card>[] iListArray = new IList<Card>[numGroups];
+            
+            for(int i = 0; i<iListArray.Length; i++)
+            {
+                var type = Type.GetType(typeof(List<Card>).AssemblyQualifiedName);
+                var list = (IList<Card>)Activator.CreateInstance(type);
+                iListArray[i] = list;
+            }
+            //get cards from each card group
+            for (int i = 0; i < numGroups; i++)
+            {
                 
-                //Console.WriteLine(fileEntries[i]);
-                //Console.WriteLine(cardCount);
+                string[] fileEntries = System.IO.Directory.GetFiles(folders[i]);//.txt file paths of current card group
+                int numCards = fileEntries.Length;//number of cards in the folder
+
+                /** FOR TESTING
+                foreach (string file in fileEntries)
+                {
+                    Console.WriteLine(file);
+                }
+                */
+
+                for (int j = 0; j < numCards; j++)
+                {
+                    Card tempCard = makeCardObject(fileEntries[j]);//make a card from the current file
+                    tempCard.belongsTo = folders[i];
+
+                    try
+                    {
+                        iListArray[i].Add(tempCard);//add the card to the iList array's appropriate index
+                    }catch(NullReferenceException e)
+                    {
+                        Console.WriteLine("Exception when adding card to IList");
+                    }
+                    
+                }
 
             }
-
             return iListArray;
 
         }
@@ -80,7 +102,7 @@ namespace Flashcards
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        static Card makeCard(string path)
+        static Card makeCardObject(string path)
         {
             Card newCard = new Card();
             int counter = 1;
@@ -90,7 +112,7 @@ namespace Flashcards
             System.IO.StreamReader file = new System.IO.StreamReader(path);
             while ((line = file.ReadLine()) != null)
             {
-                newCard.setSide(counter, line);
+                newCard.writeToSide(counter, line);
                 counter++;
             }
 
@@ -101,13 +123,15 @@ namespace Flashcards
         //main
         static int Main(string[] args)
         {
-            Console.WriteLine("Welcome to the Flashcards app.");
+     
+            IList<Card>[] cardsCollection = makeList();//Make the IList array containing the user's card collection
+
             //loop to allow for continuous usage
             while (true)
             {
                 Console.Clear();
                 //main menu
-                Console.WriteLine("---------------------------------------------");
+                Console.WriteLine("-----Flashcards App LINKED LIST SOLUTION-----\n");
                 Console.WriteLine("What would you like to do?");
                 Console.WriteLine("\n\t1: Create card group");
                 Console.WriteLine("\n\t2: Display card groups");
@@ -117,16 +141,17 @@ namespace Flashcards
                 Console.WriteLine("\n\t6: Delete card");
                 Console.WriteLine("\n\t7: Exit program\n");
                 Console.WriteLine("---------------------------------------------");
-                //Console.WriteLine(getUserDirectory());
-                makeList();
+
                 //get user's command
                 string choice = Console.ReadLine();
 
                 //switch cases to lead to different functions
                 switch (choice)
                 {
+
                     case "1":
                         createCardGroup();
+                        cardsCollection = makeList();
                         break;
                     case "2":
                         Console.Clear();
@@ -134,12 +159,14 @@ namespace Flashcards
                         break;
                     case "3":
                         deleteCardGroup();
+                        cardsCollection = makeList();
                         break;
                     case "4":
                         createCard();
                         break;
                     case "5":
-                        readCards();
+                        readCards(cardsCollection);
+                        cardsCollection = makeList();
                         break;
                     case "6":
                         deleteCard();
@@ -149,9 +176,8 @@ namespace Flashcards
                     default:
                         Console.WriteLine("Invalid command. Please try again: ");
                         break;
-                }
 
-                //Console.ReadKey();
+                }
 
             }
 
@@ -177,7 +203,6 @@ namespace Flashcards
 
                 // Try to create the directory.
                 DirectoryInfo di = Directory.CreateDirectory(path);
-                //Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
 
             }
             catch (Exception e)
@@ -192,7 +217,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(folderName);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was created successfully. Press any key to continue.");
+            Console.Write(" was created succesfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
         }
@@ -205,18 +230,21 @@ namespace Flashcards
             Console.WriteLine("--------------Your card groups---------------");
             string targetDirectory = getUserDirectory();
 
-            // Process the list of files found in the directory. 
-            string[] fileEntries = Directory.GetDirectories(targetDirectory);
-            foreach (string fileName in fileEntries)
-                ProcessFolder(fileName);
+            // Process the list of folders found in the directory. 
+            string[] folders = Directory.GetDirectories(targetDirectory);
+            foreach (string folder in folders)
+                ProcessFolder(folder);
 
             Console.WriteLine("---------------------------------------------");
 
+            //if the function was called from main, allow the user to return to the main menu
             if (calledFromMain)
             {
                 Console.WriteLine("Press any key to continue.");
                 Console.ReadKey();
             }
+
+            
         }
 
         /// <summary>
@@ -242,11 +270,12 @@ namespace Flashcards
             displayCardGroups(false);
             string folderName = Console.ReadLine();
             string path = getUserDirectory() + folderName;
+            bool deleted = true;
 
             try
             {
                 // Determine whether the directory exists. 
-                if (Directory.Exists(path))
+                if (Directory.Exists(path) && !String.IsNullOrWhiteSpace(folderName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("WARNING: All cards within the group will be lost. ");
@@ -266,6 +295,7 @@ namespace Flashcards
                 else
                 {
                     Console.WriteLine("The specified card group does not exist.");
+                    deleted = false;
                 }
 
             }
@@ -275,15 +305,24 @@ namespace Flashcards
             }
             finally { }
 
-            //inform user about successful card group deletion
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("The card group ");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(folderName);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was deleted successfully. Press any key to continue.");
-            Console.ResetColor();
-            Console.ReadKey();
+            if (deleted)
+            {
+                //inform user about successful card group deletion
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("The card group ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write(folderName);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(" was deleted succesfully. Press any key to continue.");
+                Console.ResetColor();
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("Nothing was deleted. Press any key to contiune.");
+                Console.ReadKey();
+            }
+            
         }
 
         /// <summary>
@@ -299,8 +338,9 @@ namespace Flashcards
             {
                 Console.WriteLine("Which card group would you like to modify?");
                 displayCardGroups(false);
-                string path = getUserDirectory() + Console.ReadLine();
-                if (Directory.Exists(path))
+                string input = Console.ReadLine();
+                string path = getUserDirectory() + input;
+                if (Directory.Exists(path)&& !String.IsNullOrWhiteSpace(input))
                 {
                     string[] cardContent = { "", "" };
 
@@ -329,27 +369,19 @@ namespace Flashcards
 
             //inform user about successful card group deletion
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("The card was created successfully. Press any key to continue.");
+            Console.Write("The card was created successcully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
         }
 
         /// <summary>
         /// Allows the user to select a card group and
-        /// read its cards.
+        /// read its cards. Also used for testing of makeList().
         /// </summary>
-        static void readCards()
+        static void readCards(IList<Card>[] collection)
         {
-            string folderName; //user input (file name)
-            string cardDir; //directory of the card group
-            string id; //file name without the extension
-            string side1; //side of card
-            string side2; //side of card
-            int counter = 0; //counter to see if the "end" of the hashtable has been reached
-            int length; //number of hashes
-            Random rand = new Random();
-            int sumNum; //randomly generated number
-            Card next; 
+            string folderName;//name of the card group that the user wants to read
+            string cardGroupPath;//the full path of a group in the cards/ directory
 
             //asks user to select a card group
             while (true)
@@ -357,82 +389,67 @@ namespace Flashcards
                 Console.WriteLine("Which card group would you like to read?");
                 displayCardGroups(false);
                 folderName = Console.ReadLine();
-                cardDir = getUserDirectory() + folderName;
+                cardGroupPath = getUserDirectory() + folderName;
 
-                if (Directory.Exists(cardDir))
+                //check if specified directory exists and contains at least one file. 
+                if (Directory.Exists(cardGroupPath)&&!IsDirectoryEmpty(cardGroupPath)&& !String.IsNullOrWhiteSpace(folderName))
                 {
-                    length = Directory.GetFiles(@cardDir).Length;
                     break;
                 }
                 else
                 {
-                    Console.WriteLine("The specified card group does not exist. Please try again.");
+                    Console.WriteLine("The specified card group does not exist or is empty. Please specify a valid card group.");
                 }
-            }
+   
+             }
 
-
-            Hashtable ht = new Hashtable(); //new hashtable
-            string[] fileEntries = Directory.GetFiles(cardDir); //the directories of cards into a string array
-
-            //loops through the string array fileEntries and places information into a Card Object
-            //Then inserts the Card object into the hashtable
-            //throws an exception if a Card is "corrupted"
-            foreach (string fileName in fileEntries)
+            int counter = 0;
+            //find the correct IList in the collections array
+            while (counter < collection.Length-1)
             {
-                try
+                if (collection[counter].Count == 0)
                 {
-                    file = Path.GetFileName(fileName);
-                    id = file.Substring(0, file.LastIndexOf(".txt"));
-                    side1 = File.ReadLines(fileName).First();
-                    side2 = File.ReadLines(fileName).Skip(1).Take(1).First();
-                    next = new Card(id, side1, side2);
-                    ht.Add(counter, next);
-                    counter++;
+                    //Console.WriteLine("The list at index " + counter + " is empty.");
                 }
-                catch (Exception e) {
-                    Console.WriteLine(file + " is corrupted. Delete it and try again");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    return;
-                }
-            }
-
-
-            Console.Clear();
-
-            //randomly generates different hashes to access different cards within the hashtable
-            for (int i = 0; i < length;i++)
-            {
-                sumNum = rand.Next(length);
-                next = (Card)ht[sumNum];
-
-                //goes to the next hash if the card has already been viewed
-                while (next.viewed)
+                else
                 {
-                    sumNum++;
-                    
-                    //returns to the "beginning" of the table if the it has reached the "end"
-                    if (sumNum == length)
+                    //Console.WriteLine("The list at index " + counter + " is NOT empty.");
+                    IList<Card> temp = collection[counter];
+                    if (temp[0].belongsTo.Equals(cardGroupPath))
                     {
-                        sumNum = 0;
+                        Console.WriteLine("Found the matching card group.");
+                        break;
                     }
-                    next = (Card)ht[sumNum];
                 }
 
-                Console.WriteLine(next.side1);
-                Console.ReadKey();
-                Console.WriteLine(next.side2);
-                Console.WriteLine();
-                next.viewed = true;
-                Console.ReadKey();
+                counter++;
             }
 
+            IList<Card> toRead = collection[counter];//the card group to be read
+            int numCards = toRead.Count;//number of cards in the group
+            Random rand = new Random();//random number generator
 
-            Console.WriteLine("Finished card group " + folderName);
-            Console.WriteLine("Press any key to continue");
+            int read = 0;//number of cards that have been read
+            while(read < numCards)
+            {
+                Card card = toRead[rand.Next(0, numCards)];
+                if (card.viewed == false)
+                {
+                    Console.WriteLine(card.sideOne);
+                    Console.ReadKey(true);
+                    Console.WriteLine(card.sideTwo);
+                    Console.WriteLine();
+                    card.setToViewed();
+                    read++;
+                }
+           
+            }
+
+            //notify user that the card group has been read
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("You have finished reading this card group. Press any key to return to the main menu.");
+            Console.ResetColor();
             Console.ReadKey();
-
-
 
         }
 
@@ -505,7 +522,7 @@ namespace Flashcards
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(deleteCard);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" was deleted successfully. Press any key to continue.");
+            Console.Write(" was deleted succesfully. Press any key to continue.");
             Console.ResetColor();
             Console.ReadKey();
 
@@ -537,6 +554,16 @@ namespace Flashcards
         {
             path = path.Replace(getUserDirectory() + cardGroup + "\\", "");
             Console.WriteLine(" - {0}", path);
+        }
+
+        /// <summary>
+        /// Check if the given directory contains any folders or files.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
     }
